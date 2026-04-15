@@ -18,7 +18,7 @@ python process_ctd_terminology.py \
 ```
 
 ## 2. Embed the disambiguated terminology 
-Use `embed_terms.py` to generate embeddings for all concept aliases in `terminology.json.gz`.
+Use `embed_terms.py` to generate embeddings for all concept aliases in `terminology.json.gz`.\ 
 To build an index from several terminologies, just list the files you want to combine as shown below.
 
 ```
@@ -34,7 +34,7 @@ python scripts/embed_terms.py \
 
 ## 3. Prepare the corpora
 
-The script will process each split of the dataset (train/val/test), splitting each document into sentences, and re-annotating it at the sentence level. \
+For every dataset partition (train/val/test), we split each document into sentences, and re-annotating it at the sentence level. \
 Additionally, the annotations will be filtered based on the disambiguated kb (removing oov terms).\
 The test set is filtered, removing mentions that exactly overlap with mentions in the train+val sets.
 
