@@ -32,7 +32,7 @@ def get_annotation_texts(collection, obo_prefix):
 def main():
     parser = argparse.ArgumentParser('Retrieve candidates and save them directly into BioC XML')
     parser.add_argument('--input', required=True, type=str, help='Gzipped BioC XML data with queries')
-    parser.add_argument('--ontology_vectors', required=True, type=str, help='Precalculated vectors')
+    parser.add_argument('--kb_vectors', required=True, type=str, help='Precalculated vectors')
     parser.add_argument('--top_k', required=False, type=int, default=10, help='Max candidates')
     parser.add_argument('--model_name', required=True, type=str, help='Transformer model')
     parser.add_argument('--output_file', required=True, type=str, help='Output Path for the modified BioC XML (gzipped)')
