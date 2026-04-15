@@ -35,7 +35,7 @@ def generate_feedback(args, client, tokenizer, sampling_params, xml_path):
         for passage in doc.passages:
             for sentence in passage.sentences:
                 for anno in sentence.annotations:
-                    ontology = args.target_terminology or anno.infons.get("obo_assignment", "OBO")
+                    ontology = args.kb_name or anno.infons.get("obo_assignment", "OBO")
                     
                     prompt = f"""You are a biomedical informatics expert. Given the context "{sentence.text}", specify the standard scientific name from the {ontology} ontology for the concept **{anno.text}**.
 Format the output using the following JSON structure:
@@ -103,7 +103,7 @@ Format the output using the following JSON structure:
 def main():
     parser = argparse.ArgumentParser(description='Generate standard name for a mention conditioned on the target ontology.')
     parser.add_argument('--data_dir', required=True,type=str,help='Path to the folder with xml files.')
-    parser.add_argument('--target_terminology', required=True,type=str,help='The official name of the target ontology.')
+    parser.add_argument('--kb_name', required=True,type=str,help='The official name of the target KB.')
     parser.add_argument('--model_name', required=True, type=str ,help='Model name on HuggingFace.')
     parser.add_argument('--hf_token', required=True, type=str, help='Your huggingface token.')
     args = parser.parse_args()
