@@ -41,7 +41,7 @@ The test set is filtered, removing mentions that exactly overlap with mentions i
 ```
 DATA_DIR=../../source_corpora
 KB_DIR=../../kbs
-OUTPUT_DIR=../../processed_data
+OUTPUT_DIR=../../processed_data/ncbi-disease
 
 python prepare_ncbi_disease.py \
     --data_dir ${DATA_DIR}\
@@ -58,7 +58,7 @@ The `generate_feedback.py` script generates standard OBO name for each detected 
 ```
 MODEL_NAME="Qwen/Qwen3-14B"
 HF_TOKEN="YOUR_HF_TOKEN"
-DATA_DIR=../../processed_data
+DATA_DIR=../../processed_data/ncbi-disease
 
 python generate_feedback_local.py \
     --data_dir ${DATA_DIR} \
@@ -72,7 +72,7 @@ python generate_feedback_local.py \
 The following script retrieves 20 candidate concepts from the target terminology for each annotated mention in the xml file.
 ```
 MODEL_NAME=cambridgeltl/SapBERT-from-PubMedBERT-fulltext 
-DATA_DIR=../../processed_data
+DATA_DIR=../../processed_data/ncbi-disease
 KB_DIR=../../kbs
 
 python retrieve_candidates.py 
