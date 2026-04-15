@@ -105,10 +105,10 @@ def main():
     parser.add_argument('--data_dir', required=True,type=str,help='Path to the folder with xml files.')
     parser.add_argument('--target_terminology', required=True,type=str,help='The official name of the target ontology.')
     parser.add_argument('--model_name', required=True, type=str ,help='Model name on HuggingFace.')
+    parser.add_argument('--hf_token', required=True, type=str, help='Your huggingface token.')
     args = parser.parse_args()
 
-    HF_TOKEN = "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"
-    tokenizer = AutoTokenizer.from_pretrained(args.model_name, token=HF_TOKEN)
+    tokenizer = AutoTokenizer.from_pretrained(args.model_name, token=args.hf_token)
     # vLLM setup - using 19000 max_tokens is dangerous for batching
     client = LLM(model=args.model_name, dtype="float16", trust_remote_code=True)
     sampling_params = SamplingParams(temperature=0, max_tokens=150) 
