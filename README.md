@@ -45,7 +45,7 @@ OUTPUT_DIR=../../processed_data/ncbi-disease
 
 python prepare_ncbi_disease.py \
     --data_dir ${DATA_DIR}\
-    --dictionary_dir ${KB_DIR}/ctd-diseases \
+    --terminology_dir ${KB_DIR}/ctd-diseases \
     --output_dir ${OUTPUT_DIR} \
     --with_sentences\
     --filter_test
