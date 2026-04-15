@@ -83,10 +83,9 @@ python retrieve_candidates.py \
     --top_k 20 --apply_grf --use_rocchio --alpha .6
 ```
 
-## 5. Build HF Dataset for reranker training
+## 6. Build HF Dataset for reranker training
 
 ```
-
 DATA_DIR=../../processed_data/ncbi-disease
 KB_DIR=../../kbs
 HF_REPO="Name of the dataset repo on HF"
@@ -101,4 +100,30 @@ python build_hf_datasets.py
     --epoch ${N_EPOCH}\
     --processed_kb_path ${KB_DIR}/processed_kb.json \
     --hf_token ${HF_TOKEN}
+```
+
+## 7. Train BeLink reranker
+```
+HF_REPO="Name of the dataset repo on HF"
+CHECKPOINT_DIR=../../trained_reranker
+
+CUDA_VISIBLE_DEVICES=0 swift sft \
+--model Qwen/Qwen3-8B \
+--train_type full  
+--num_train_epochs 1 \
+--output_dir ${CHECKPOINT_DIR}  
+--dataset ${HF_REPO} \
+--use_hf 1 
+--download_mode force_redownload \
+--torch_dtype bfloat16 \
+--dataloader_num_workers 4 \
+--warmup_ratio 0.05 \
+--learning_rate 6e-6 \
+--per_device_train_batch_size 2 \
+--per_device_eval_batch_size 2 \
+--gradient_accumulation_steps 8 \
+--eval_steps 500  \
+--save_steps 2000  \
+--save_total_limit 2  \
+--logging_steps 500
 ```
