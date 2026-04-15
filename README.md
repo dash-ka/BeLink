@@ -1,7 +1,7 @@
 # BeLink
 Biomedical Entity Linking Meets Generative Re-Ranking
 
-## 1. Load and disambiguate a target terminology
+## 1. Load and disambiguate target terminology
 
 The preprocessing script will generate three files:
 - `terminology.json.gz` - A json containing the OBO terminology (e.g. of the structure {"id": "MESH:0001", "name": concept_name})
