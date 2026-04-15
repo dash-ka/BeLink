@@ -5,66 +5,6 @@ from tqdm import tqdm
 from bioc import biocxml
 from concurrent.futures import ThreadPoolExecutor
 
-
-def gen_feedback(args, mention, sentence, ontology):
-    """
-    Prompts OpenAI to generate feedback for a given mention span.
-    """
-    
-    prompt = f"""
-    You are a biomedical informatics expert. Given the context "{sentence}", specify the standard scientific name from the {ontology} ontology for the concept **{mention}**.
-    Format the output using the following JSON structure:
-    {{ "name": <"standard scientific concept name"> }}
-    """
-    
-    client = OpenAI(api_key=args.openai_key)
-    try:
-        response = client.chat.completions.create(
-            model=args.model_name,#"gpt-4.1-mini-2025-04-14", 
-            messages=[{"role": "user", "content": prompt}],
-            response_format={"type": "json_object"},
-            temperature=0  # Keep it deterministic
-        )
-        
-        # Expecting: {"name": "standard name"}
-        result = json.loads(response.choices[0].message.content)
-        return result
-
-    except Exception as e:
-        return f"Error: {e}"
-    
-
-def generate_feedback(args, xml_path, onto_name):
-    
-    is_gz = str(xml_path).endswith('.gz')
-    opener = gzip.open if is_gz else open
-    with opener(xml_path, 'rt', encoding='utf-8') as fp:
-        collection = biocxml.load(fp)
-
-    for doc in collection.documents:
-        for passage in doc.passages:
-            for sent in passage.sentences:
-                for anno in sent.annotations:
-                    # Get the assignment from OpenAI
-                    response = gen_feedback(
-                        args=args,
-                        mention=anno.text, 
-                        sentence=sent.text,
-                        ontology=anno.infons.get("ontologies", onto_name)
-                    )
-                    print(response)
-                    # Update the annotation
-                    if response.get("name"):
-                        anno.infons['feedback2'] = response.get("name")
-
-    # 4. Save/Overwrite the XML
-    write_mode = 'wt' if is_gz else 'w'
-    with opener(xml_path, write_mode, encoding='utf-8') as fp:
-        biocxml.dump(collection, fp)
-    
-    print(f"Updated {xml_path} with feedback.")
-
-
 # Increase this based on your OpenAI rate limits (e.g., 5, 10, or 20)
 MAX_WORKERS = 10 
 
