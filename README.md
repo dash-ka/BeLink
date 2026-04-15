@@ -22,7 +22,7 @@ Use `embed_terms.py` to generate embeddings for all concept aliases in `terminol
 To build an index from several terminologies, just list the files you want to combine as shown below.
 
 ```
-KB_DIR=./kbs
+KB_DIR=../../kbs
 MODEL_NAME=cambridgeltl/SapBERT-from-PubMedBERT-fulltext
 
 python scripts/embed_terms.py \
@@ -39,9 +39,9 @@ Additionally, the annotations will be filtered based on the disambiguated kb (re
 The test set is filtered, removing mentions that exactly overlap with mentions in the train+val sets.
 
 ```
-DATA_DIR=./source_corpora
-KB_DIR=./kbs
-OUTPUT_DIR=./processed_data
+DATA_DIR=../../source_corpora
+KB_DIR=../../kbs
+OUTPUT_DIR=../../processed_data
 
 python prepare_ncbi_disease.py \
     --data_dir ${DATA_DIR}\
@@ -49,4 +49,35 @@ python prepare_ncbi_disease.py \
     --output_dir ${OUTPUT_DIR} \
     --with_sentences\
     --filter_test
+```
+
+## 4. [OPTIONAL] Run Generative Query Reformulation
+
+The `generate_feedback.py` script generates standard OBO name for each detected mention. It modifies the file inplace, adding entity annotations at the mention level.
+
+```
+MODEL_NAME="Qwen/Qwen3-14B"
+HF_TOKEN="YOUR_HF_TOKEN"
+DATA_DIR=../../processed_data
+
+python generate_feedback_local.py \
+    --data_dir ${DATA_DIR} \
+    --model_name ${MODEL_NAME} \
+    --hf_token ${HF_TOKEN}     
+```
+
+## 5. Retrieve candidates
+
+The following script retrieves 20 candidate concepts from the target terminology for each annotated mention in the xml file.
+```
+MODEL_NAME=cambridgeltl/SapBERT-from-PubMedBERT-fulltext 
+DATA_DIR=../../processed_data
+KB_DIR=../../kbs
+
+python retrieve_candidates.py 
+--input ${DATA_DIR}/seville_hunter.xml
+--ontology_vectors ${ONTOLOGY_DIR}/mix_embeddings.npy
+--model_name ${MODEL_NAME}
+--output_file ${DATA_DIR}/seville_hunter_retrieved.xml
+--top_k 20 --apply_grf --use_rocchio --alpha .6
 ```
