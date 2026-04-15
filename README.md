@@ -75,10 +75,30 @@ MODEL_NAME=cambridgeltl/SapBERT-from-PubMedBERT-fulltext
 DATA_DIR=../../processed_data/ncbi-disease
 KB_DIR=../../kbs
 
-python retrieve_candidates.py 
---input ${DATA_DIR}/train.xml.gz
---kb_vectors ${KB_DIR}/ctd-disease/embeddings.npy
---model_name ${MODEL_NAME}
---output_file ${DATA_DIR}/train.xml.gz
---top_k 20 --apply_grf --use_rocchio --alpha .6
+python retrieve_candidates.py \
+    --input ${DATA_DIR}/train.xml.gz \
+    --kb_vectors ${KB_DIR}/ctd-disease/embeddings.npy \
+    --model_name ${MODEL_NAME} \
+    --output_file ${DATA_DIR}/train.xml.gz \
+    --top_k 20 --apply_grf --use_rocchio --alpha .6
+```
+
+## 5. Build HF Dataset for reranker training
+
+```
+
+DATA_DIR=../../processed_data/ncbi-disease
+KB_DIR=../../kbs
+HF_REPO="Name of the dataset repo on HF"
+HF_TOKEN="Your HF token"
+N_EPOCH="Number of training epochs"
+
+python build_hf_datasets.py 
+    --dir_local ${DATA_DIR} \
+    --dir_hf_dataset ${HF_REPO}
+    --train_path ${DATA_DIR}/traindev.bioc.xml.gz \
+    --test_path ${DATA_DIR}/test.bioc.xml.gz \
+    --epoch ${N_EPOCH}\
+    --processed_kb_path ${KB_DIR}/processed_kb.json \
+    --hf_token ${HF_TOKEN}
 ```
