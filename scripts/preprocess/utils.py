@@ -27,59 +27,7 @@ def get_sentence_annotations(passage, sentence):
                    anno.total_span.offset >= sentence_start and anno.total_span.end <= sentence_end]
     
     return annotations
-
-def mark_sentences_old(collection):
-
-    # Adapted from https://github.com/Glasgow-AI4BioMed/entitytools/blob/main/entitytools/sentences.py
-    """
-    Marks the sentences within a collection. Sentences are marked within the collection.
-    :param collection: the collection of documents.
-    """
-    import spacy
-    nlp = spacy.load("en_core_web_sm")
-
-    true_start = -1
-    start = -1
-    end = -1
-    for doc in tqdm(collection):
-        for passage in doc.passages:
-            if len(passage.annotations) > 0:
-                i = 0
-                current_anno = passage.annotations[i]
-                start_offset = current_anno.locations[0].offset
-                end_offset = start_offset + current_anno.locations[0].length
-            else:
-                start_offset = 10000000
-                end_offset = 10000000
-            parsed = nlp(passage.text)
-            true_start = -1
-            for sent in parsed.sents:
-                start = sent[0].idx
-                end = sent[-1].idx + len(sent[-1].text)
-                while (end_offset - passage.offset) <= end and (i + 1) < len(passage.annotations):
-                    i += 1
-                    current_anno = passage.annotations[i]
-                    start_offset = current_anno.locations[0].offset
-                    end_offset = start_offset + current_anno.locations[0].length
-
-                if (start_offset - passage.offset) > end or (end_offset - passage.offset) < end:
-                    start = true_start if true_start != -1 else start
-                    sentence = bioc.BioCSentence()
-                    sentence.text = passage.text[start:end]
-                    sentence.offset = passage.offset + start
-                    sentence.infons['length'] = (end - start)
-                    passage.add_sentence(sentence)
-                    true_start = -1
-                elif true_start == -1:
-                    true_start = start
-            if true_start != -1:
-                sentence = bioc.BioCSentence()
-                sentence.text = passage.text[true_start:len(passage.text)]
-                sentence.offset = passage.offset + true_start
-                sentence.infons['length'] = len(passage.text) - true_start
-                passage.add_sentence(sentence)
-                true_start = -1
-
+    
 
 def mark_sentences(collection):
     """Splits passage into sentences, and re-annotates at the sentence level."""
