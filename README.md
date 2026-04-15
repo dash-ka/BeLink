@@ -18,7 +18,7 @@ python process_ctd_terminology.py \
 ```
 
 ## 2. Embed the disambiguated terminology 
-Use `embed_terms.py` to generate embeddings for all concept aliases in `terminology.json.gz`.\ 
+Use `embed_terms.py` to generate embeddings for all concept aliases in `terminology.json.gz`. \ 
 To build an index from several terminologies, just list the files you want to combine as shown below.
 
 ```
