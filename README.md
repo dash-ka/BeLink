@@ -53,7 +53,7 @@ python prepare_ncbi_disease.py \
 
 ## 4. [OPTIONAL] Run Generative Query Reformulation
 
-The `generate_feedback.py` script generates standard OBO name for each detected mention. It modifies the file inplace, adding entity annotations at the mention level.
+The `generate_feedback_local.py` script generates standard scientific name for each detected mention. It modifies the file inplace, adding entity annotations at the mention level.
 
 ```
 MODEL_NAME="Qwen/Qwen3-14B"
