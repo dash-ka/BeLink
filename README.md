@@ -32,7 +32,7 @@ python scripts/embed_terms.py \
     --out_vectors ${KB_DIR}/mix_embeddings.npy
 ```
 
-## 3. Prepare the corpora
+## 3. Prepare corpora
 
 For every dataset partition (train/val/test), we split each document into sentences, and re-annotate it at the sentence level. \
 Additionally, the annotations will be filtered based on the disambiguated kb (removing oov terms).\
