@@ -10,7 +10,7 @@ The preprocessing script will generate three files:
 - `alt_ids2cui.json` - A json file with alternative ids for each concept.
 ```
 cd scripts/preprocess
-KB_DIR=./kbs
+KB_DIR=../../kbs
     
 python process_ctd_terminology.py \
   --terminology_path  ${KB_DIR}/CTD_disease.tsv.gz \ 
@@ -62,6 +62,7 @@ DATA_DIR=../../processed_data
 
 python generate_feedback_local.py \
     --data_dir ${DATA_DIR} \
+    --kb_name "CTD Disease" \
     --model_name ${MODEL_NAME} \
     --hf_token ${HF_TOKEN}     
 ```
@@ -75,9 +76,9 @@ DATA_DIR=../../processed_data
 KB_DIR=../../kbs
 
 python retrieve_candidates.py 
---input ${DATA_DIR}/seville_hunter.xml
---ontology_vectors ${ONTOLOGY_DIR}/mix_embeddings.npy
+--input ${DATA_DIR}/train.xml.gz
+--kb_vectors ${KB_DIR}/ctd-disease/embeddings.npy
 --model_name ${MODEL_NAME}
---output_file ${DATA_DIR}/seville_hunter_retrieved.xml
+--output_file ${DATA_DIR}/train.xml.gz
 --top_k 20 --apply_grf --use_rocchio --alpha .6
 ```
