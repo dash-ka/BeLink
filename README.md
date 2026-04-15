@@ -34,7 +34,7 @@ python scripts/embed_terms.py \
 
 ## 3. Prepare the corpora
 
-For every dataset partition (train/val/test), we split each document into sentences, and re-annotating it at the sentence level. \
+For every dataset partition (train/val/test), we split each document into sentences, and re-annotate it at the sentence level. \
 Additionally, the annotations will be filtered based on the disambiguated kb (removing oov terms).\
 The test set is filtered, removing mentions that exactly overlap with mentions in the train+val sets.
 
