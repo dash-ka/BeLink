@@ -4,48 +4,6 @@ from transformers import AutoModel, AutoTokenizer
 from pathlib import Path
 from dense_vectors import make_dense_vectors
 
-def load_ontology_tsv(filename, by_id=False):
-    """
-    Loads an ontology from a .tsv file.
-    :param filename: the name of the file.
-    :return: the ontology.
-    """
-    ontology = []
-    with gzip.open(filename,'rt',encoding='utf8') as f:
-        for line in f:
-            split = line.rstrip('\n').split('\t')
-            db_id = int(split[0])
-            source_id = split[1]
-            extra_ids = split[2].split('|')
-            tags = split[3].split('|')
-            name = split[4]
-            description = split[5]
-            aliases = [ alias for alias in split[6].split('|') if alias ]
-            relations = split[7].split('|')
-            
-            assert len(name.strip()) > 0, f"Entity must have a name ({source_id=})"
-            
-            entity = {'db_id':int(db_id), 'id':source_id, 'extra_ids':extra_ids, 'tags':tags, 'name':name, 'description':description, 'aliases':aliases, 'relations':relations}
-            
-            ontology.append( entity )
-
-    return ontology
-
-def load_ontology(filename):
-    """
-    Loads an ontology from a file.
-    :param filename: the name of the file (must be gzipped JSON or TSV file)
-    :return: the ontology
-    """
-    assert filename.endswith('.json.gz') or filename.endswith('.tsv.gz'), "Ontology filename must be a gzipped JSON or TSV file"
-    if filename.endswith('.json.gz'):
-        with gzip.open(filename,'rt') as f:
-            ontology = json.load(f)
-    elif filename.endswith('.tsv.gz'):
-        ontology = load_ontology_tsv(filename)
-
-    return ontology
-
 def main():
     parser = argparse.ArgumentParser('Apply a transformer model to multiple ontology term names and save as one npy')
     parser.add_argument('--ontology', required=True, type=str, nargs='+', 
@@ -61,8 +19,10 @@ def main():
     for ont_path in args.ontology:
         print(f"Loading ontology: {ont_path}...")
         try:
-            ontology = load_ontology(ont_path)
-            # The * operator is required here to unpack the list of tuples for zip
+             # must be gzipped JSON {"id":"concept_id", "name":"alias_text"}
+             with gzip.open(ont_path,'rt') as f:
+                ontology = json.load(f)
+            
             data = [(e["id"], e['name'].lower()) for e in ontology if e.get('name')]
             
             if data:
@@ -82,7 +42,6 @@ def main():
         print("No terms found. Exiting.")
         return
 
-    
     parent_dir = Path(args.out_vectors).parent
     mapping_file = "ontology_mapping.txt" 
     full_mapping_path = parent_dir / mapping_file
