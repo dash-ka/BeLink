@@ -69,7 +69,7 @@ python generate_feedback_local.py \
 
 ## 5. Retrieve candidates
 
-The following script retrieves 20 candidate concepts from the target terminology for each annotated mention in the xml file.
+The following script retrieves 20 candidate concepts from the target terminology for each annotated mention in the input xml file.
 ```
 MODEL_NAME=cambridgeltl/SapBERT-from-PubMedBERT-fulltext 
 DATA_DIR=../../processed_data/ncbi-disease
