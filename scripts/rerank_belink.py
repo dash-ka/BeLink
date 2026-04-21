@@ -2,6 +2,7 @@ import os, gzip, string, argparse
 from bioc import biocxml
 from swift.llm import InferEngine, InferRequest, PtEngine, RequestConfig, get_template
 from tqdm import tqdm
+import belink.swift_integration 
 
 # generation_config
 MAX_NEW_TOKENS = 20
