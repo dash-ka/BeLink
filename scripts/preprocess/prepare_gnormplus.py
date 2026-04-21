@@ -1,10 +1,9 @@
 from bioc import pubtator, biocxml
-import gzip, argparse, os, csv, json, re, bioc, copy
+import gzip, argparse, os, csv, json, re, copy
 from tqdm.auto import tqdm
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from entitytools.entitytools.file_formats import pubtator_to_bioc, save_bioc_docs
-from utils import mark_sentences, load_cui_set, filter_unseen_queries
+from belink.preprocess.utils import mark_sentences, load_cui_set, filter_unseen_queries, save_bioc_docs, pubtator_to_bioc
 
 def filter_collection(args, collection):
 

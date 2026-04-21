@@ -1,10 +1,7 @@
 from bioc import biocxml
-import gzip, argparse, os, json, bioc, copy
-from tqdm import tqdm
-import xml.etree.ElementTree as ET
 from pathlib import Path
-from entitytools.entitytools.file_formats import save_bioc_docs
-from belink.preprocess.utils import mark_sentences, load_cui_set, filter_unseen_queries
+import gzip, argparse, os, json
+from belink.preprocess.utils import mark_sentences, load_cui_set, filter_unseen_queries, save_bioc_docs
 
 def filter_collections(args, collection):
 
@@ -101,7 +98,7 @@ def main():
     val_docs_nlm = filter_collections(args, val_docs_nlm)
     test_docs_nlm =  filter_collections(args, test_docs_nlm)
 
-    from pathlib import Path
+    
     output_dir = Path(args.output_dir)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)

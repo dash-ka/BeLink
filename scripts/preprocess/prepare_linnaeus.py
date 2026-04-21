@@ -3,8 +3,7 @@ from tqdm.auto import tqdm
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from datasets import load_dataset
-from entitytools.entitytools.file_formats import save_bioc_docs
-from belink.preprocess.utils import mark_sentences, load_cui_set, filter_unseen_queries
+from belink.preprocess.utils import mark_sentences, load_cui_set, filter_unseen_queries, save_bioc_docs
 
 def filter_collection(args, collection):
 

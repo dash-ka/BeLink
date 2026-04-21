@@ -3,8 +3,7 @@ import gzip, argparse,os,json, bioc, copy
 from tqdm import tqdm
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from entitytools.entitytools.file_formats import save_bioc_docs
-from utils import mark_sentences, load_cui_set, filter_unseen_queries
+from belink.preprocess.utils import mark_sentences, load_cui_set, filter_unseen_queries, save_bioc_docs
 
 def filter_collections(args, collection):
 
