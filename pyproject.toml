@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "belink"
+version = "0.1.0"
+description = "Biomedical Entity Linking with Generative Re-Ranking"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+
+dependencies = [
+    # Data & I/O
+    "bioc",
+    "pronto",
+    "gzip-reader",
+    "more-itertools",
+
+    # ML & embeddings
+    "torch",
+    "transformers",
+    "numpy",
+    "faiss-cpu",          # use faiss-gpu manually if you have a GPU
+
+    # HuggingFace ecosystem
+    "datasets",
+    "huggingface-hub",
+
+    # Utilities
+    "tqdm",
+    "pandas",
+    "openai",
+]
+
+[project.optional-dependencies]
+# vllm is Linux-only and optional — only needed for local LLM inference
+vllm = ["vllm"]
+
+# Development tools
+dev = [
+    "pytest",
+    "black",
+    "ruff",
+]
+
+[project.scripts]
+# CLI entry points — we will wire these up later
+# belink-preprocess = "belink.cli:preprocess"
+# belink-embed      = "belink.cli:embed"
+# belink-retrieve   = "belink.cli:retrieve"
+
+[tool.setuptools.packages.find]
+# Automatically find all packages inside the belink/ folder
+where = ["."]
+include = ["belink*"]
+
+[tool.setuptools.package-data]
+# Include any non-Python files inside the package if needed
+"belink" = ["py.typed"]

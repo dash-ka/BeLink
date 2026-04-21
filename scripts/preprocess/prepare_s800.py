@@ -6,7 +6,7 @@ from pathlib import Path
 from datasets import load_dataset
 from collections import defaultdict
 from entitytools.entitytools.file_formats import pubtator_to_bioc, save_bioc_docs
-from utils import mark_sentences, load_cui_set, filter_unseen_queries
+from belink.preprocess.utils import mark_sentences, load_cui_set, filter_unseen_queries
 
 def filter_collection(args, collection):
 

@@ -1,0 +1,31 @@
+# -------------------------------------------------------
+# BeLink — Python dependencies
+# Install with: pip install -r requirements.txt
+# -------------------------------------------------------
+
+# --- Data formats & I/O ---
+bioc
+pronto
+more-itertools
+
+# --- ML & Embeddings ---
+torch
+transformers
+numpy
+faiss-cpu          # swap for faiss-gpu if you have a GPU
+
+# --- HuggingFace ecosystem ---
+datasets
+huggingface-hub
+
+# --- Utilities ---
+tqdm
+pandas
+openai
+
+# --- Optional: local LLM inference (Linux only) ---
+# vllm             # uncomment if you want to run generate_feedback_local.py
+
+# --- Local / custom packages (installed separately) ---
+# entitytools      # install manually: pip install -e vendor/entitytools
+# swift            # install manually: pip install -e vendor/swift
