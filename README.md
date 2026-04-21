@@ -9,6 +9,9 @@ cd BeLink
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -e .
+
+# download spacy model
+python -m spacy download en_core_web_sm
 ```
 
 ## 1. Load and disambiguate target terminology

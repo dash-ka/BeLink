@@ -173,7 +173,7 @@ def resolve_homonyms(name2cui: list, kb: dict, alt_ids2cui: dict, qualified=Fals
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Process NCBI Gene knowledge base.")
-    parser.add_argument("--dictionary_path", type=str, required=True,
+    parser.add_argument("--terminology_path", type=str, required=True,
                         help="Path to the txt file")
     parser.add_argument("--output_dir", type=str,
                         default="../datasets/ncbi-gene-grf", 
@@ -186,7 +186,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    filepath = args.dictionary_path
+    filepath = args.terminology_path
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -206,10 +206,10 @@ def main():
     with open(output_dir / "statistics_taxon.json", "w") as file:
         json.dump(taxon2gene, file, indent=4)
 
-    with open(output_dir / "alt_ids2cui.json", "w") as file:
+    with open(output_dir / "alt_ids2cui.json", "w", encoding="utf-8") as file:
         json.dump(alt_ids2cui, file, indent=4)
 
-    with open(output_dir / "processed_kb.json", "w") as file:
+    with open(output_dir / "processed_kb.json", "w", encoding="utf-8") as file:
         json.dump(new_kb, file, indent=4)
 
     with gzip.open(output_dir / "terminology.json.gz", "wt", encoding="utf-8") as file:

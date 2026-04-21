@@ -1,4 +1,4 @@
-import bioc, copy, gzip
+import bioc, copy, gzip, json
 from tqdm.auto import tqdm
 from bioc import biocxml
 
@@ -133,14 +133,15 @@ def mark_sentences(collection):
             assert len(passage.annotations) <1
 
 def load_cui_set(path):
-        cui_set = set()
-        with open(path, 'r', encoding="utf-8") as f:
-            for line in f:
-                cui, *_ = line.strip().split('||')
-                for c in cui.split('|'):
-                    c = c.strip()
-                    cui_set.add(c)
-        return cui_set
+    cui_set = set()
+    is_gz = str(path).endswith('.gz')
+    opener = gzip.open if is_gz else open
+    
+    with opener(path, 'rt', encoding='utf-8') as f:
+        entries = json.load(f)
+        for e in entries:
+            cui_set.add(e["id"])
+    return cui_set
 
 def filter_unseen_queries(test_collection, train_collections_lst):
 

@@ -22,6 +22,7 @@ huggingface-hub
 tqdm
 pandas
 openai
+spacy
 
 # --- Optional: local LLM inference (Linux only) ---
 # vllm             # uncomment if you want to run generate_feedback_local.py

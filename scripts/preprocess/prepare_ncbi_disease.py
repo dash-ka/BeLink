@@ -41,6 +41,7 @@ def filter_collections(args, collection):
         print("Loading dictionary...")
         cui_set = load_cui_set(os.path.join(args.terminology_dir, "terminology.json.gz"))
         print("CUI set size: ", len(cui_set))
+        
 
         with open(os.path.join(args.terminology_dir, "alt_ids2cui.json")) as f:
             alt_ids2cui = json.load(f)

@@ -150,7 +150,7 @@ def resolve_homonyms(name2cui: dict, kb: dict, alt_ids2cui: dict) -> dict:
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Process CTD diseases knowledge base.")
-    parser.add_argument("--dictionary_path", type=str, required=True,
+    parser.add_argument("--terminology_path", type=str, required=True,
                         help="Path to the CTD_disease.tsv.gz file")
     parser.add_argument("--output_dir", type=str, required=True,
                         help="Path of output directory")
@@ -159,7 +159,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    filepath = args.dictionary_path
+    filepath = args.terminology_path
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -173,10 +173,10 @@ def main():
             clean_name = re.sub(r"\n", " ", name.strip())
         disambiguated_kb.append({"id": cui.strip(), "name": clean_name})
 
-    with open(output_dir / "alt_ids2cui.json", "w") as file:
+    with open(output_dir / "alt_ids2cui.json", "w", encoding="utf-8") as file:
         json.dump(alt_ids2cui, file, indent=4)
 
-    with open(output_dir / "processed_kb.json", "w") as file:
+    with open(output_dir / "processed_kb.json", "w", encoding="utf-8") as file:
         json.dump(new_kb, file, indent=4)
 
     with gzip.open(output_dir /"terminology.json.gz", "wt", encoding="utf-8") as file:

@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.backends.legacy:build"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "belink"
@@ -20,7 +20,8 @@ dependencies = [
     # ML & embeddings
     "torch",
     "transformers",
-    "numpy",
+    "numpy", 
+    "spacy",
     "faiss-cpu",          # use faiss-gpu manually if you have a GPU
 
     # HuggingFace ecosystem

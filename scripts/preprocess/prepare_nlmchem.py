@@ -1,7 +1,34 @@
 from bioc import biocxml
 from pathlib import Path
-import gzip, argparse, os, json
+import bioc, argparse, os, json
 from belink.preprocess.utils import mark_sentences, load_cui_set, filter_unseen_queries, save_bioc_docs
+
+def json_to_bioc(data):
+    collection = []
+    for doc_json in data["documents"]:
+        doc = bioc.BioCDocument()
+
+        doc.id = doc_json['id']
+    
+        for passage_data in doc_json.get('passages', []):
+            passage = bioc.BioCPassage()
+            passage.offset = passage_data['offset']
+            passage.text = passage_data.get('text', '')
+            passage.infons = passage_data.get('infons', {})
+    
+            for ann_data in passage_data.get('annotations', []):
+                ann = bioc.BioCAnnotation()
+                if (ann_data["infons"]['type'] == 'Chemical') and ("CompositeRole" not in ann_data["infons"]):
+                    ann.infons = { 'concept_id': ann_data["infons"]['identifier']}
+                    ann.text = ann_data.get('text', '')
+                    for loc in ann_data.get('locations', []):
+                        ann.add_location(bioc.BioCLocation(loc['offset'], loc['length']))
+                    passage.add_annotation(ann)
+
+            doc.add_passage(passage)
+    
+        collection.append(doc)
+    return collection
 
 def filter_collections(args, collection):
 
@@ -17,6 +44,7 @@ def filter_collections(args, collection):
             alt_ids2cui = json.load(f)
 
         for doc in collection:
+            
             for passage in doc.passages:
                 filtered_annotations = []
                 for anno in passage.annotations:
@@ -31,7 +59,7 @@ def filter_collections(args, collection):
                     if len(anno.infons)>1:
                         skipped_non_contiguous +=1
                         continue
-
+                    
                     if new_id in cui_set:
                         # over-write concept_id
                         anno.infons["concept_id"] = new_id
@@ -61,42 +89,22 @@ def main():
     assert os.path.isdir(args.data_dir)
 
     print("Loading NLM-Chemical data...")
-    with open(f'{args.data_dir}/pmcids_train.txt', encoding="utf-8") as f:
-        train_pmcids = [ line.strip() for line in f ]
-    with open(f'{args.data_dir}/pmcids_dev.txt') as f:
-        val_pmcids = [ line.strip() for line in f ]
-    with open(f'{args.data_dir}/pmcids_test.txt') as f:
-        test_pmcids = [ line.strip() for line in f ]
-
-    train_docs_nlm, val_docs_nlm, test_docs_nlm = [], [], []
-    for filename in os.listdir(f"{args.data_dir}/ALL"):
-        with open(f"{args.data_dir}/ALL/{filename}", encoding="utf-8") as fp:
-            collection = biocxml.load(fp)
-            for doc in collection.documents:
-                if doc.id in train_pmcids:
-                    train_docs_nlm.append(doc)
-                elif doc.id in val_pmcids:
-                    val_docs_nlm.append(doc)
-                elif doc.id in test_pmcids:
-                    test_docs_nlm.append(doc)
-                else:
-                    raise RuntimeError(f"{doc.id=} is not in one of the train/val/test groupings")
-
-    print("Reformatting BioC XML annotations...")
-    for doc in train_docs_nlm+val_docs_nlm+test_docs_nlm :
-        for passage in doc.passages:
-            passage.annotations = [ anno for anno in passage.annotations if
-                                    (anno.infons['type'] == 'Chemical')  
-                                    and ("CompositeRole" not in anno.infons) 
-                                ]
-            for anno in passage.annotations:
-                anno.infons = { 'concept_id': anno.infons['identifier'] }
-
+    with open(f'{args.data_dir}/train.json', encoding="utf-8") as f:
+        data = json.load(f)
+    train_docs = json_to_bioc(data)
+    
+    with open(f'{args.data_dir}/dev.json') as f:
+        data = json.load(f)
+    val_docs = json_to_bioc(data)
+   
+    with open(f'{args.data_dir}/test.json') as f:
+        data = json.load(f)
+    test_docs = json_to_bioc(data)
 
     print("Filtering annotations for those in ontology...")
-    train_docs_nlm = filter_collections(args, train_docs_nlm)
-    val_docs_nlm = filter_collections(args, val_docs_nlm)
-    test_docs_nlm =  filter_collections(args, test_docs_nlm)
+    train_docs = filter_collections(args, train_docs)
+    val_docs = filter_collections(args, val_docs)
+    test_docs =  filter_collections(args, test_docs)
 
     
     output_dir = Path(args.output_dir)
@@ -104,21 +112,21 @@ def main():
         os.makedirs(output_dir)
 
     if args.filter_test:
-        unseen_queries = filter_unseen_queries(test_docs_nlm, [train_docs_nlm, val_docs_nlm])
+        unseen_queries = filter_unseen_queries(test_docs, [train_docs, val_docs])
         mark_sentences(unseen_queries)
         save_bioc_docs(unseen_queries, output_dir / "unseen_test.bioc.xml.gz")
         
     if args.with_sentences:
         print("Marking sentences...")
-        mark_sentences(train_docs_nlm)
-        mark_sentences(val_docs_nlm)
-        mark_sentences(test_docs_nlm)
+        mark_sentences(train_docs)
+        mark_sentences(val_docs)
+        #mark_sentences(test_docs)
         
     print("Saving documents NLM-Chem...")
     #save_bioc_docs(train_docs_nlm, output_dir / "train.bioc.xml.gz")
     #save_bioc_docs(val_docs_nlm, output_dir / "val.bioc.xml.gz")
-    save_bioc_docs(train_docs_nlm+val_docs_nlm, output_dir / "traindev.bioc.xml.gz")
-    print(f"{len(train_docs_nlm)=} {len(val_docs_nlm)=} {len(train_docs_nlm+val_docs_nlm)=} {len(test_docs_nlm)=}")
+    save_bioc_docs(train_docs + val_docs, output_dir / "traindev.bioc.xml.gz")
+    print(f"{len(train_docs)=} {len(val_docs)=} {len(train_docs + val_docs)=} {len(test_docs)=}")
 
     print("Done")
 	
