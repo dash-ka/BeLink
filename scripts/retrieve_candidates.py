@@ -22,6 +22,10 @@ def get_annotation_texts(collection, obo_prefix):
                         if obo_prefix and obo_prefix not in anno.infons.get("obo_assignment", "").lower():
                             continue
                 
+                        if not isinstance(anno.infons.get("feedback", ""), str):
+                            print("No feedback, SKIPPING!")
+                            continue
+                            
                         annotation_texts[clean_mention] = {
                                 "mention": clean_mention, 
                                 "feedback": anno.infons.get("feedback", "")
@@ -62,7 +66,7 @@ def main():
     
     # 4. Load Vectors & Search
     print("Loading ontology vectors and performing search...")
-    onto_vectors = np.load(args.ontology_vectors)
+    onto_vectors = np.load(args.kb_vectors)
     
     lookup = make_dense_lookup(
         model, tokenizer, onto_vectors, anno_texts_dict, 
@@ -72,7 +76,7 @@ def main():
     print(f"Retrieved candidates for {len(lookup)} queries.")
 
     # 4.5 load ontology id to text mapping
-    mapping_path = Path(args.ontology_vectors).parent / "ontology_mapping.txt"
+    mapping_path = Path(args.kb_vectors).parent / "ontology_mapping.txt"
 
     with open(mapping_path, "r", encoding="utf-8") as f:
         ontology_entries = [l.strip() for l in f if l.strip()]

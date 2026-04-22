@@ -68,7 +68,7 @@ Format the output using the following JSON structure:
         result = extract_json(generated_text)
         
         if result.get("name") and result["name"].strip():
-            tasks[i]["anno_obj"].infons["feedback_local"] = result["name"]
+            tasks[i]["anno_obj"].infons["feedback"] = result["name"]
             tasks[i]["success"] = True
         else:
             failed_indices.append(i)
@@ -90,7 +90,7 @@ Format the output using the following JSON structure:
             
             # Save whatever we got on the second try, even if empty, to avoid infinite loops
             final_name = result.get("name", "").strip()
-            tasks[orig_idx]["anno_obj"].infons["feedback_local"] = final_name
+            tasks[orig_idx]["anno_obj"].infons["feedback"] = final_name
             if not final_name:
                 print(f"Warning: Permanent failure for entity: {tasks[orig_idx]['anno_obj'].text}")
 
